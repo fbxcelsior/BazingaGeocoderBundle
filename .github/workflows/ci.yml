@@ -1,47 +1,53 @@
 name: CI
 on: [push, pull_request]
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     phpstan:
         name: "PHPStan"
         runs-on: ubuntu-latest
         env:
-            php-version: 8.0
+            php-version: 8.1
         steps:
             - name: "Setup PHP"
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ env.php-version }}
-                  tools: composer:v2, flex, cs2pr
+                  tools: flex
 
             - name: "Checkout code"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: "Install Composer dependencies"
               run: |
-                  composer install --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader
+                  composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
             - name: "Run PHPStan"
-              run: vendor/bin/phpstan analyse --no-progress --error-format=checkstyle | cs2pr
+              run: |
+                  vendor/bin/simple-phpunit --version
+                  vendor/bin/phpstan analyse --no-progress
 
     php-cs-fixer:
         name: PHP-CS-Fixer
         runs-on: ubuntu-latest
         env:
-            php-version: 8.0
+            php-version: 8.1
         steps:
             - name: "Setup PHP"
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ env.php-version }}
-                  tools: composer:v2, flex, cs2pr
+                  tools: flex, cs2pr
 
             - name: "Checkout code"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: "Install Composer dependencies"
               run: |
-                  composer install --prefer-dist --no-progress --no-suggest --no-interaction --optimize-autoloader
+                  composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
             - name: "Run PHP-CS-Fixer"
               run: vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --format=checkstyle | cs2pr
@@ -54,13 +60,11 @@ jobs:
             fail-fast: true
             matrix:
                 strategy: ['default']
-                php: ['7.3', '7.4', '8.0', '8.1']
+                php: ['7.4', '8.0', '8.1', '8.2']
                 include:
-                    - php: '7.3'
-                      sf_version: '4.4.*'
-                      strategy: 'lowest'
                     - php: '7.4'
                       sf_version: '5.4.*'
+                      strategy: 'lowest'
                     - php: '8.0'
                       sf_version: '5.4.*'
                     - php: '8.1'
@@ -69,16 +73,18 @@ jobs:
                       sf_version: '6.0.*'
                     - php: '8.1'
                       sf_version: '6.0.*'
+                    - php: '8.2'
+                      sf_version: '6.2.*'
         steps:
             - name: "Setup PHP"
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
-                  tools: composer:v2, flex
+                  tools: flex
                   coverage: none
 
             - name: "Checkout code"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: "Install Composer dependencies (default)"
               if: matrix.strategy != 'lowest'
@@ -104,7 +110,7 @@ jobs:
             max-parallel: 10
             fail-fast: true
             matrix:
-                php: ['7.4', '8.0', '8.1']
+                php: ['7.4', '8.0', '8.1', '8.2']
                 include:
                     - php: '7.4'
                       sf_version: '4.4.*'
@@ -118,16 +124,18 @@ jobs:
                       sf_version: '6.0.*'
                     - php: '8.1'
                       sf_version: '6.0.*'
+                    - php: '8.2'
+                      sf_version: '6.2.*'
         steps:
             - name: "Setup PHP"
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
-                  tools: composer:v2, flex
+                  tools: flex
                   coverage: none
 
             - name: "Checkout code"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: "Install Composer dependencies"
               env:

@@ -2,6 +2,38 @@
 
 The changelog describes what have been "Added", "Changed", "Removed" or "Fixed" between versions.
 
+## Version 5.19.0
+
+### Changed
+
+- Allow PSR-18 client
+- Updated Geocoder Provider dependency requirements to the latest versions
+- Deprecate `httplug_client` option in most provider factories in favour of `http_client`.
+
+### Fixed
+
+- Load fakeip plugin before cache
+
+## Version 5.18.0
+
+### Added
+
+- Add OpenRouteService factory
+
+## Version 5.17.0
+
+### Changed
+
+- Updated PHP requirement to ^7.4
+- Updated minimum required version for some dependencies
+- Deprecate `Address::$errorNames` in favour of `Address::ERROR_NAMES`.
+
+## Version 5.16.2
+
+### Fixed
+
+- Fix deprecations with Symfony 6.1
+
 ## Version 5.16.1
 
 ### Fixed

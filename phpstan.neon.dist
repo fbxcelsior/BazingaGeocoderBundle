@@ -1,14 +1,10 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
+	bootstrapFiles:
+		- vendor/bin/.phpunit/phpunit/vendor/autoload.php
 	paths:
-		- %currentWorkingDirectory%
-	excludePaths:
-		- ./vendor/
-		- ./Tests/
-	level: 7
-	ignoreErrors:
-		-
-			path: %currentWorkingDirectory%/DependencyInjection/Configuration.php
-			message: '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface::(end|variableNode)#'
-		-
-			path: %currentWorkingDirectory%/ProviderFactory/GeoipFactory.php
-			message: '#Geocoder\\Provider\\Geoip\\Geoip#'
+		- src/
+		#- tests/
+	level: 9
